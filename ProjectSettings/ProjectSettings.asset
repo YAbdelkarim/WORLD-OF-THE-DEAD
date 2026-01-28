@@ -929,6 +929,11 @@ PlayerSettings:
   qualitySettingsNames: []
   projectName: WORLD OF THE DEAD
   organizationId: yabdelkarim
+  cloudProjectId: 7b0d784f-0a71-41f3-a0da-4cf2a59da18f
+  framebufferDepthMemorylessMode: 0
+  qualitySettingsNames: []
+  projectName: WORLD-OF-THE-DEAD
+  organizationId: shawermaaast
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

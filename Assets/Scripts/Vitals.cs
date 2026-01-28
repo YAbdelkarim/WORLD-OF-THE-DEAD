@@ -6,6 +6,9 @@ public abstract class Vitals : MonoBehaviour
     public int hp;
     public int maxHp;
     public int invFrames;
+    int hp;
+    public int maxHp;
+    int invFrames;
     public int maxInvFrames;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -13,6 +16,7 @@ public abstract class Vitals : MonoBehaviour
     {
         SetHp(GetMaxHp());
         SetInvFrames(0);
+        SetInvFrames(GetMaxInvFrames());
     }
 
     // Update is called once per frame

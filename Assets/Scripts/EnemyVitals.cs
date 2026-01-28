@@ -4,7 +4,7 @@ public class EnemyVitals : Vitals
 {
 
     EnemyBehavior enemyBehavior;
-
+    Gun gun;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -29,11 +29,14 @@ public class EnemyVitals : Vitals
         Destroy(gameObject, 5f);
     }
 
-    // void OnCollisionEnter(Collision collisionInfo)
-    // {
-    //     if (collisionInfo.gameObject.CompareTag("Player"))
-    //     {
-    //         TakeDamage(1);
-    //     }
-    // }
+    public void BecomeInvincible()
+    {
+        gun.damage = 0;
+    }
+    public void BecomeVulnerable()
+    {
+        gun.damage = 10;
+    }
+
 }
+
