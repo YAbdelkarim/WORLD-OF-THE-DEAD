@@ -3,16 +3,16 @@ using UnityEngine;
 public abstract class Vitals : MonoBehaviour
 {
 
-    int hp;
+    public int hp;
     public int maxHp;
-    int invFrames;
+    public int invFrames;
     public int maxInvFrames;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     protected virtual void Start()
     {
         SetHp(GetMaxHp());
-        SetInvFrames(GetMaxInvFrames());
+        SetInvFrames(0);
     }
 
     // Update is called once per frame
@@ -34,7 +34,7 @@ public abstract class Vitals : MonoBehaviour
 
     public void SetHp(int hp)
     {
-        if (hp > 0)
+        if (hp >= 0)
         {
             this.hp = hp;
         }
@@ -42,7 +42,7 @@ public abstract class Vitals : MonoBehaviour
 
     public void SetInvFrames(int invFrames)
     {
-        if (invFrames > 0)
+        if (invFrames >= 0)
         {
             this.invFrames = invFrames;
         }

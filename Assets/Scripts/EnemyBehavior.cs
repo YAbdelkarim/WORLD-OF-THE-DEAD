@@ -27,7 +27,9 @@ public class EnemyBehavior : MonoBehaviour
 
     private bool isRotating;
     private Quaternion targetRotation;
-    public float rotationSpeed = 1f;
+    private float rotationSpeed;
+
+    public float idleRotationSpeed = 1f;
 
     private NavMeshAgent agent;
     public Transform target;
@@ -38,6 +40,7 @@ public class EnemyBehavior : MonoBehaviour
         enemyVitals = GetComponent<EnemyVitals>();
         agent = GetComponent<NavMeshAgent>();
         state = EnemyState.IDLE;
+        rotationSpeed = idleRotationSpeed;
         // Find the player object by tag
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         if (player == null)
@@ -55,6 +58,7 @@ public class EnemyBehavior : MonoBehaviour
             //Idly turn around
             if (state == EnemyState.IDLE)
             {
+                rotationSpeed = idleRotationSpeed;
                 RandomRotate();
             }
 
@@ -96,6 +100,13 @@ public class EnemyBehavior : MonoBehaviour
             {
                 state = EnemyState.AGGRO;
             }
+
+            //Always face the player if aggroed
+            if (state == EnemyState.AGGRO || state == EnemyState.ATTACKING)
+            {
+                rotationSpeed = idleRotationSpeed * 2.5f;
+                RotateToPlayer();
+            }
         }
         else
         {
@@ -110,18 +121,8 @@ public class EnemyBehavior : MonoBehaviour
 
     }
 
-    void RandomRotate()
+    void Rotate()
     {
-
-        // 1 in 1000 chance per frame (approx 60 times a second if 60fps)
-        if (!isRotating && UnityEngine.Random.Range(0, 200) == 0)
-        {
-            // Create a new random Euler angle (e.g., around Y axis)
-            float randomY = UnityEngine.Random.Range(0f, 360f);
-            targetRotation = Quaternion.Euler(0, randomY, 0);
-            isRotating = true;
-        }
-
         // Smoothly interpolate to the target rotation
         if (isRotating)
         {
@@ -136,6 +137,20 @@ public class EnemyBehavior : MonoBehaviour
         }
     }
 
+    void RandomRotate()
+    {
+        // 1 in 1000 chance per frame (approx 60 times a second if 60fps)
+        if (!isRotating && UnityEngine.Random.Range(0, 200) == 0)
+        {
+            // Create a new random Euler angle (e.g., around Y axis)
+            float randomY = UnityEngine.Random.Range(0f, 360f);
+            targetRotation = Quaternion.Euler(0, randomY, 0);
+            isRotating = true;
+        }
+
+        Rotate();
+    }
+
     void CheckForPlayerLineOfSight()
     {
         Vector3 directionToPlayer = player.position - transform.position;
@@ -146,24 +161,18 @@ public class EnemyBehavior : MonoBehaviour
         // 1. Check if player is within range
         if (distanceToPlayer < viewDistance)
         {
-            Debug.Log("FirstIf");
             // 2. Check if player is within the enemy's field of view angle
             if (Vector3.Angle(transform.forward, normalizedDirection) < viewAngle / 2f)
             {
-                Debug.Log("SecondIf");
                 RaycastHit hit;
                 // 3. Cast a ray to check for obstacles
                 if (Physics.Raycast(transform.position, normalizedDirection, out hit, viewDistance))
                 {
-                    Debug.Log("ThirdIf");
 
                     // Check if the first object hit is the player
                     if (hit.collider.CompareTag("Player"))
                     {
-                        Debug.Log("FourthIf");
-                        state = EnemyState.AGGRO;
-                        aggroResetTimer = aggroCooldown;
-                        Debug.Log("Player detected!");
+                        Aggro();
                     }
                 }
             }
@@ -186,12 +195,14 @@ public class EnemyBehavior : MonoBehaviour
         return distance;
     }
 
-    public void turnToPlayer()
+    void RotateToPlayer()
     {
-        var lookPos = player.position - transform.position;
-        lookPos.y = 0;
-        var rotation = Quaternion.LookRotation(lookPos);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, Time.deltaTime * 0.1f);
+        targetRotation = Quaternion.LookRotation(
+            Vector3.ProjectOnPlane(player.position - transform.position, Vector3.up)
+        );
+        if (Quaternion.Angle(transform.rotation, targetRotation) >= 0.1f)
+            isRotating = true;
+        Rotate();
     }
 
     // Optional: Draw the line of sight in the Scene view for debugging
@@ -202,5 +213,11 @@ public class EnemyBehavior : MonoBehaviour
             Gizmos.color = aggroResetTimer == aggroCooldown ? Color.red : Color.yellow;
             Gizmos.DrawRay(transform.position, (player.position - transform.position).normalized * viewDistance);
         }
+    }
+
+    public void Aggro()
+    {
+        state = EnemyState.AGGRO;
+        aggroResetTimer = aggroCooldown;
     }
 }

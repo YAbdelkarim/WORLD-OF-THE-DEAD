@@ -21,7 +21,7 @@ public class EnemyVitals : Vitals
     public override void TakeDamage(int dmg)
     {
         base.TakeDamage(dmg);
-        enemyBehavior.turnToPlayer();
+        enemyBehavior.Aggro();
     }
 
     public override void Die()
@@ -33,7 +33,6 @@ public class EnemyVitals : Vitals
     {
         if (collisionInfo.gameObject.CompareTag("Player"))
         {
-            Debug.Log("Ow");
             TakeDamage(1);
         }
     }
