@@ -29,11 +29,11 @@ public class EnemyVitals : Vitals
         Destroy(gameObject, 5f);
     }
 
-    void OnCollisionEnter(Collision collisionInfo)
-    {
-        if (collisionInfo.gameObject.CompareTag("Player"))
-        {
-            TakeDamage(1);
-        }
-    }
+    // void OnCollisionEnter(Collision collisionInfo)
+    // {
+    //     if (collisionInfo.gameObject.CompareTag("Player"))
+    //     {
+    //         TakeDamage(1);
+    //     }
+    // }
 }
